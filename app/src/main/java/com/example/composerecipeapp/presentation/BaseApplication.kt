@@ -1,10 +1,8 @@
 package com.example.composerecipeapp.presentation
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-//@HiltAndroidApp
+@HiltAndroidApp
 class BaseApplication :Application(){
-    override fun onCreate() {
-        super.onCreate()
-    }
 }

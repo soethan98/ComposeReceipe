@@ -2,8 +2,9 @@ package com.example.composerecipeapp.network.model
 
 import com.example.composerecipeapp.domain.model.Recipe
 import com.example.composerecipeapp.domain.util.DomainMapper
+import javax.inject.Inject
 
-class RecipeDtoMapper : DomainMapper<RecipeDto, Recipe> {
+class RecipeDtoMapper: DomainMapper<RecipeDto, Recipe> {
 
     override fun mapToDomainModel(model: RecipeDto): Recipe {
         return Recipe(
@@ -37,11 +38,11 @@ class RecipeDtoMapper : DomainMapper<RecipeDto, Recipe> {
         )
     }
 
-    fun fromEntityList(initial: List<RecipeDto>): List<Recipe>{
+    fun toDomainList(initial: List<RecipeDto>): List<Recipe>{
         return initial.map { mapToDomainModel(it) }
     }
 
-    fun toEntityList(initial: List<Recipe>): List<RecipeDto>{
+    fun fromDomainList(initial: List<Recipe>): List<RecipeDto>{
         return initial.map { mapFromDomainModel(it) }
     }
 
