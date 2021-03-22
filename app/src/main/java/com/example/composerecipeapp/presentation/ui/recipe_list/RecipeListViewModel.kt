@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.composerecipeapp.domain.model.Recipe
 import com.example.composerecipeapp.repository.RecipeRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Named
 
@@ -19,6 +20,7 @@ class RecipeListViewModel @ViewModelInject constructor(
     val query = mutableStateOf("")
     val selectedCategory: MutableState<FoodCategory?> = mutableStateOf(null)
     var categoryScrollPosition = 0
+    val loading = mutableStateOf(false)
 
 
     init {
@@ -27,9 +29,24 @@ class RecipeListViewModel @ViewModelInject constructor(
 
     fun newSearch() {
         viewModelScope.launch {
+            loading.value = true
+
+            resetSearchState()
+
+            delay(1000)
             val result = repository.search(token = token, page = 1, query = query.value)
             recipes.value = result
+            loading.value = false
         }
+    }
+
+    fun resetSearchState() {
+        recipes.value = listOf()
+        if (selectedCategory.value?.value != query.value) clearSelectedCategory()
+    }
+
+    private fun clearSelectedCategory() {
+        selectedCategory.value = null
     }
 
 
