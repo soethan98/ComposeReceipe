@@ -40,9 +40,7 @@ fun RecipeCard(
                         contentScale = ContentScale.Crop
                     )
                 }
-
             }
-
             recipe.title?.let { title ->
                 Row(
                     modifier = Modifier.fillMaxWidth()

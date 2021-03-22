@@ -5,15 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +39,7 @@ import com.example.composerecipeapp.presentation.components.FoodCategoryChip
 import com.example.composerecipeapp.presentation.components.RecipeCard
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -52,6 +57,7 @@ class RecipeListFragment : Fragment() {
             setContent {
                 val recipes = viewModel.recipes.value
                 val query = viewModel.query.value
+                val selectedCategory = viewModel.selectedCategory.value
                 val keyboardController = LocalFocusManager.current
                 Column() {
                     Surface(
@@ -60,7 +66,7 @@ class RecipeListFragment : Fragment() {
                         elevation = 8.dp
                     ) {
 
-                        Column() {
+                        Column {
                             Row(modifier = Modifier.fillMaxWidth(.95f).padding(8.dp)) {
                                 TextField(
                                     value = query,
@@ -82,7 +88,7 @@ class RecipeListFragment : Fragment() {
                                     ),
                                     keyboardActions = KeyboardActions(
                                         onDone = {
-                                            viewModel.newSearch(query = query)
+                                            viewModel.newSearch()
                                             keyboardController.clearFocus()
                                         }
                                     )
@@ -93,12 +99,22 @@ class RecipeListFragment : Fragment() {
                                     modifier = Modifier.align(Alignment.CenterVertically)
                                 )
                             }
-                            LazyRow(modifier = Modifier.padding(horizontal = 8.dp)) {
+                            val scrollState = rememberLazyListState()
+                            val scope = rememberCoroutineScope()
+
+                            LazyRow(
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
+                                state = scrollState
+                            ) {
+                                scope.launch { scrollState.scrollToItem(viewModel.categoryScrollPosition) }
                                 itemsIndexed(items = getAllFoodCategories()) { index, item ->
-                                    FoodCategoryChip(category = item.value, onExecuteSearch = {
-                                        viewModel.onQueryChanged(it)
-                                        viewModel.newSearch(it)
-                                    })
+                                    FoodCategoryChip(category = item.value,
+                                        isSelectedCategory = item == selectedCategory,
+                                        onExecuteSearch = viewModel::newSearch,
+                                        onSelectedCategoryChange = {
+                                            viewModel.onSelectedCategoryChanged(it)
+                                            viewModel.onChangeCategoryScrollPosition(index)
+                                        })
                                 }
 
                             }
