@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -29,6 +31,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.fragment.findNavController
 import com.example.composerecipeapp.R
+import com.example.composerecipeapp.presentation.components.FoodCategoryChip
 import com.example.composerecipeapp.presentation.components.RecipeCard
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -53,40 +56,53 @@ class RecipeListFragment : Fragment() {
                 Column() {
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colors.primary,
+                        color = Color.White,
                         elevation = 8.dp
                     ) {
-                        Row(modifier = Modifier.fillMaxWidth(.95f).padding(8.dp)) {
-                            TextField(
-                                value = query,
-                                onValueChange = { viewModel.onQueryChanged(it) },
-                                label = {
-                                    Text(text = "Search")
-                                },
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Text,
-                                    imeAction = ImeAction.Done,
-                                ),
 
-                                leadingIcon = {
-                                    Icon(Icons.Filled.Search, contentDescription = "Icons")
-                                },
-                                colors = TextFieldDefaults.textFieldColors(
-                                    backgroundColor = MaterialTheme.colors.surface,
-                                    textColor = MaterialTheme.colors.onSurface
-                                ),
-                                keyboardActions = KeyboardActions(
-                                    onDone = {
-                                        viewModel.newSearch(query = query)
-                                        keyboardController.clearFocus()
-                                    }
+                        Column() {
+                            Row(modifier = Modifier.fillMaxWidth(.95f).padding(8.dp)) {
+                                TextField(
+                                    value = query,
+                                    onValueChange = { viewModel.onQueryChanged(it) },
+                                    label = {
+                                        Text(text = "Search")
+                                    },
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Text,
+                                        imeAction = ImeAction.Done,
+                                    ),
+
+                                    leadingIcon = {
+                                        Icon(Icons.Filled.Search, contentDescription = "Icons")
+                                    },
+                                    colors = TextFieldDefaults.textFieldColors(
+                                        backgroundColor = MaterialTheme.colors.surface,
+                                        textColor = MaterialTheme.colors.onSurface
+                                    ),
+                                    keyboardActions = KeyboardActions(
+                                        onDone = {
+                                            viewModel.newSearch(query = query)
+                                            keyboardController.clearFocus()
+                                        }
+                                    )
+
                                 )
+                                Icon(
+                                    Icons.Filled.Search, contentDescription = "Search",
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                )
+                            }
+                            LazyRow(modifier = Modifier.padding(horizontal = 8.dp)) {
+                                itemsIndexed(items = getAllFoodCategories()) { index, item ->
+                                    FoodCategoryChip(category = item.value, onExecuteSearch = {
+                                        viewModel.onQueryChanged(it)
+                                        viewModel.newSearch(it)
+                                    })
+                                }
 
-                            )
-                            Icon(
-                                Icons.Filled.Search, contentDescription = "Search",
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
+                            }
+
                         }
                     }
                     LazyColumn() {
