@@ -1,5 +1,6 @@
 package com.example.composerecipeapp.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -22,6 +23,7 @@ fun ShimmerRecipeCardItem(
     padding: Dp
 ) {
 
+
     val brush = Brush.linearGradient(
         colors = colors,
         start = Offset(xShimmer - gradientWidth, yShimmer - gradientWidth),
@@ -38,8 +40,10 @@ fun ShimmerRecipeCardItem(
         }
         Spacer(modifier = Modifier.height(8.dp))
 
-        Surface(shape = MaterialTheme.shapes.small,
-            modifier = Modifier.padding(vertical = 8.dp)) {
+        Surface(
+            shape = MaterialTheme.shapes.small,
+            modifier = Modifier.padding(vertical = 8.dp)
+        ) {
             Spacer(
                 modifier = Modifier.fillMaxWidth()
                     .height(cardHeight / 10)

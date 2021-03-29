@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -21,6 +22,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.composerecipeapp.presentation.ui.recipe_list.FoodCategory
 import com.example.composerecipeapp.presentation.ui.recipe_list.getAllFoodCategories
 import kotlinx.coroutines.launch
@@ -34,20 +36,22 @@ fun SearchAppBar(
     selectedCategory: FoodCategory?,
     onChangeScrollPosition: (Int) -> Unit,
     onSelectedCategoryChanged: (String) -> Unit,
-
-
-    ) {
+    onToggleTheme: () -> Unit
+) {
     val keyboardController = LocalFocusManager.current
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = Color.White,
+        color = MaterialTheme.colors.secondary,
         elevation = 8.dp
     ) {
 
         Column {
-            Row(modifier = Modifier.fillMaxWidth(.95f).padding(8.dp)) {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 TextField(
+                    modifier = Modifier
+                        .fillMaxWidth(.9f)
+                        .padding(8.dp),
                     value = query,
                     onValueChange = { onQueryChanged(it) },
                     label = {
@@ -73,6 +77,18 @@ fun SearchAppBar(
                     )
 
                 )
+                ConstraintLayout(modifier = Modifier.align(Alignment.CenterVertically)) {
+                    val menu = createRef()
+                    IconButton(onClick = onToggleTheme,
+                        modifier = Modifier.constrainAs(menu) {
+                            end.linkTo(parent.end)
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                        }) {
+                        Icon(Icons.Filled.MoreVert, contentDescription = "Toggle Dark/Light Theme")
+
+                    }
+                }
                 Icon(
                     Icons.Filled.Search, contentDescription = "Search",
                     modifier = Modifier.align(Alignment.CenterVertically)
