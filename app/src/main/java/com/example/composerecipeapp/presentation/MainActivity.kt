@@ -3,6 +3,7 @@ package com.example.composerecipeapp.presentation
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ScrollView
+import android.widget.Space
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
 
     }
@@ -48,6 +50,7 @@ fun Meal() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
+
                 Text(
                     text = "Happy Meal", style = TextStyle(
                         fontSize = 26.sp
@@ -72,14 +75,16 @@ fun Meal() {
             )
             Spacer(modifier = Modifier.padding(top = 8.dp))
 
-            Button(
-                onClick = { },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                Text(text = "ORDER NOW")
-            }
+//            Button(
+//                onClick = { },
+//                modifier = Modifier.align(Alignment.CenterHorizontally)
+//            ) {
+//                Text(text = "ORDER NOW")
+//            }
 
 
         }
     }
 }
+
+

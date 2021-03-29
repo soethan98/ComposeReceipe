@@ -10,37 +10,23 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.fragment.findNavController
 import com.example.composerecipeapp.R
-import com.example.composerecipeapp.presentation.components.CircularIndeterminateProgressBar
-import com.example.composerecipeapp.presentation.components.FoodCategoryChip
-import com.example.composerecipeapp.presentation.components.RecipeCard
-import com.example.composerecipeapp.presentation.components.SearchAppBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+
+// for a `var` variable also add
+import androidx.compose.runtime.setValue
+
+// or just
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.example.composerecipeapp.presentation.components.*
+
 import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
@@ -72,14 +58,22 @@ class RecipeListFragment : Fragment() {
                         onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged
                     )
 
+
+
                     Box {
-                        LazyColumn() {
-                            itemsIndexed(items = recipes) { index, recipe ->
-                                RecipeCard(recipe = recipe, onClick = {
-                                    findNavController().navigate(R.id.viewRecipe)
-                                })
+
+                        if (isLoading) {
+                            LoadingRecipeListShimmer(imageHeight = 250.dp)
+                        } else {
+                            LazyColumn() {
+                                itemsIndexed(items = recipes) { index, recipe ->
+                                    RecipeCard(recipe = recipe, onClick = {
+                                        findNavController().navigate(R.id.viewRecipe)
+                                    })
+                                }
                             }
                         }
+
 
                         CircularIndeterminateProgressBar(isDisplayed = isLoading)
                     }
