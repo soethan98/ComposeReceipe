@@ -63,6 +63,7 @@ class RecipeListFragment : Fragment() {
                     val query = viewModel.query.value
                     val selectedCategory = viewModel.selectedCategory.value
                     val isLoading = viewModel.loading.value
+                    val page = viewModel.page.value
                     val scaffoldState = rememberScaffoldState()
 
                     Scaffold(topBar = {
@@ -79,7 +80,7 @@ class RecipeListFragment : Fragment() {
                                         )
                                     }
                                 } else {
-                                    viewModel.newSearch()
+                                    viewModel.onTriggerEvent(RecipeListEvent.NewSearchEvent)
                                 }
                             },
                             scrollPosition = viewModel.categoryScrollPosition,
@@ -94,11 +95,15 @@ class RecipeListFragment : Fragment() {
                             scaffoldState.snackbarHostState
                         }) {
                         Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
-                            if (isLoading) {
+                            if (isLoading && recipes.isEmpty()) {
                                 LoadingRecipeListShimmer(imageHeight = 250.dp)
                             } else {
                                 LazyColumn() {
                                     itemsIndexed(items = recipes) { index, recipe ->
+                                        viewModel.onChangeRecipeScrollPosition(index)
+                                        if ((index + 1) >= (page * PAGE_SIZE) && !isLoading) {
+                                            viewModel.onTriggerEvent(RecipeListEvent.NextPageEvent)
+                                        }
                                         RecipeCard(recipe = recipe, onClick = {
                                             findNavController().navigate(R.id.viewRecipe)
                                         })
